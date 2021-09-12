@@ -48,6 +48,31 @@ fit_quantiles_together <- function(total_trace, fixed_sim, sample_size,
                                unname(unlist(sim_out[1:66,"Dual_0"])))
       Dual_1_store <- rbind(Dual_1_store,
                                unname(unlist(sim_out[1:66,"Dual_1"])))
+      
+      
+      for(i in 1:nrow(sim_out)){
+        
+        sim_out[i, "Hos_RSV_0"] <- rnbinom(n = 1,
+                                           mu = as.numeric(sim_out[i, "Hos_RSV_0"]), 
+                                           size = as.numeric(pars_df[,"overdispersion"]))
+        sim_out[i, "Hos_RSV_1"] <- rnbinom(n = 1,
+                                           mu = as.numeric(sim_out[i, "Hos_RSV_1"]), 
+                                           size = as.numeric(pars_df[,"overdispersion"]))
+        sim_out[i, "Hos_INF_0"] <- rnbinom(n = 1,
+                                           mu = as.numeric(sim_out[i, "Hos_INF_0"]), 
+                                           size = as.numeric(pars_df[,"overdispersion"]))
+        sim_out[i, "Hos_INF_1"] <- rnbinom(n = 1,
+                                           mu = as.numeric(sim_out[i, "Hos_INF_1"]), 
+                                           size = as.numeric(pars_df[,"overdispersion"]))
+        sim_out[i, "Dual_0"] <- rnbinom(n = 1,
+                                        mu = as.numeric(sim_out[i, "Dual_0"]), 
+                                        size = as.numeric(pars_df[,"overdispersion"]))
+        sim_out[i, "Dual_1"] <- rnbinom(n = 1,
+                                        mu = as.numeric(sim_out[i, "Dual_1"]), 
+                                        size = as.numeric(pars_df[,"overdispersion"]))
+      }
+      
+      
       colnames(Hos_RSV_0_store) <- seq(1:66)
       colnames(Hos_RSV_1_store) <- seq(1:66)
       colnames(Hos_INF_0_store) <- seq(1:66)
@@ -205,7 +230,7 @@ create_quantile_plot_together <- function(quantile_table, fixed_sim,
   PLOT <- ggplot(merged_table) +
     geom_line(aes(x=start_week, y=zoo::rollmean(value, k=rolling_mean, na.pad = T)),
               size=0.5)+
-    geom_ribbon(aes(x=start_week,ymin=p0.025, ymax = p0.975, fill = variable), alpha = 0.8) +
+    geom_ribbon(aes(x=start_week,ymin=p0.025, ymax = p0.975, fill = variable), alpha = 0.5) +
     scale_fill_manual(values =c("#66c2a5","#66c2a5","#fc8d62","#fc8d62", "#8da0cb", "#8da0cb")) +
     geom_line(aes(x=start_week, y=p0.5, 
                   group = variable, colour = variable), size=0.5)+
