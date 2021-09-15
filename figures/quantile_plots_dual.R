@@ -52,24 +52,36 @@ fit_quantiles_together <- function(total_trace, fixed_sim, sample_size,
       
       for(i in 1:nrow(sim_out)){
         
-        sim_out[i, "Hos_RSV_0"] <- rnbinom(n = 1,
-                                           mu = as.numeric(sim_out[i, "Hos_RSV_0"]), 
-                                           size = as.numeric(pars_df[,"overdispersion"]))
-        sim_out[i, "Hos_RSV_1"] <- rnbinom(n = 1,
-                                           mu = as.numeric(sim_out[i, "Hos_RSV_1"]), 
-                                           size = as.numeric(pars_df[,"overdispersion"]))
-        sim_out[i, "Hos_INF_0"] <- rnbinom(n = 1,
-                                           mu = as.numeric(sim_out[i, "Hos_INF_0"]), 
-                                           size = as.numeric(pars_df[,"overdispersion"]))
-        sim_out[i, "Hos_INF_1"] <- rnbinom(n = 1,
-                                           mu = as.numeric(sim_out[i, "Hos_INF_1"]), 
-                                           size = as.numeric(pars_df[,"overdispersion"]))
-        sim_out[i, "Dual_0"] <- rnbinom(n = 1,
-                                        mu = as.numeric(sim_out[i, "Dual_0"]), 
-                                        size = as.numeric(pars_df[,"overdispersion"]))
-        sim_out[i, "Dual_1"] <- rnbinom(n = 1,
-                                        mu = as.numeric(sim_out[i, "Dual_1"]), 
-                                        size = as.numeric(pars_df[,"overdispersion"]))
+        
+        sim_out[i, "all_0"] <- rnbinom(n = 1,
+                                       mu = (as.numeric(sim_out[i, "Hos_RSV_0"]) +
+                                               as.numeric(sim_out[i, "Hos_INF_0"]) +
+                                               as.numeric(sim_out[i, "Dual_0"]) ), 
+                                       size = as.numeric(pars_df[,"overdispersion"]))
+        sim_out[i, "all_1"] <- rnbinom(n = 1,
+                                       mu = (as.numeric(sim_out[i, "Hos_RSV_1"]) +
+                                               as.numeric(sim_out[i, "Hos_INF_1"]) +
+                                               as.numeric(sim_out[i, "Dual_1"]) ), 
+                                       size = as.numeric(pars_df[,"overdispersion"]))
+        
+        youngest <- rmultinom(n = 1, 
+                              size = as.numeric(sim_out[i,"all_0"]),
+                              prob = c(as.numeric(sim_out[i, "Hos_RSV_0"]),
+                                       as.numeric(sim_out[i, "Hos_INF_0"]),
+                                       as.numeric(sim_out[i, "Dual_0"]) ))
+        sim_out[i, "Hos_RSV_0"] <- youngest[1]
+        sim_out[i, "Hos_INF_0"] <- youngest[2]
+        sim_out[i, "Dual_0"] <- youngest[3]
+        
+        
+        older <- rmultinom(n = 1, size = as.numeric(sim_out[i,"all_1"]),
+                           prob = c(as.numeric(sim_out[i, "Hos_RSV_1"]),
+                                    as.numeric(sim_out[i, "Hos_INF_1"]),
+                                    as.numeric(sim_out[i, "Dual_1"]) ))
+        
+        sim_out[i, "Hos_RSV_1"] <- older[1]
+        sim_out[i, "Hos_INF_1"] <- older[2]
+        sim_out[i, "Dual_1"] <- older[3]
       }
       
       
@@ -233,7 +245,7 @@ create_quantile_plot_together <- function(quantile_table, fixed_sim,
     geom_ribbon(aes(x=start_week,ymin=p0.025, ymax = p0.975, fill = variable), alpha = 0.5) +
     scale_fill_manual(values =c("#66c2a5","#66c2a5","#fc8d62","#fc8d62", "#8da0cb", "#8da0cb")) +
     geom_line(aes(x=start_week, y=p0.5, 
-                  group = variable, colour = variable), size=0.5)+
+                  group = variable, colour = variable), size=0.6)+
     scale_colour_manual(values =c("#66c2a5","#66c2a5","#fc8d62","#fc8d62", "#8da0cb", "#8da0cb")) +
     facet_wrap(variable~., ncol = 1, scales="free_y")+
     labs(y="Incidence",

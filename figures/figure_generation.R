@@ -21,7 +21,7 @@ source("figure_generation_functions.R")
 ####### FIGURE 2 - Data/Fit ######
 # creates fit plot
 FITS_TOGETHER <- fit_quantiles_together(trace_to_sample, multi_data, 
-                                       sample_size = 1000, together=T,
+                                       sample_size = 10, together=T,
                                        rolling_mean = 1,  
                                        from=1, to=19651)
 FITS_TOGETHER <- FITS_TOGETHER + labs(title="A: Model fit")

@@ -31,14 +31,18 @@ upper_bounds = theta_bounds[,"Upper"]
 names(lower_bounds) =names(upper_bounds) = row.names(theta_bounds)
 lower_bounds <- c(lower_bounds, overdispersion = 0)
 upper_bounds <- c(upper_bounds, overdispersion = Inf)
+lower_bounds <- c(lower_bounds, Dual_mult = 1)
+upper_bounds <- c(upper_bounds, Dual_mult = Inf)
 
 init_theta <- input_params_theta[,array_num]
 names(init_theta) <- input_params_theta[,1]
 init_theta <- c(init_theta, overdispersion = 1)
+init_theta <- c(init_theta, Dual_mult = 10)
 
-proposal_sd <- input_params_proposal[,array_num]/20
+proposal_sd <- input_params_proposal[,array_num]/10
 names(proposal_sd) <- input_params_proposal[,1]
- proposal_sd <- c(proposal_sd, overdispersion = 0.01)
+proposal_sd <- c(proposal_sd, overdispersion = 0.01)
+proposal_sd <- c(proposal_sd, Dual_mult = 0.1)
 
 covmat <- matrix(0,ncol=length(init_theta), nrow=length(init_theta))
 diag(covmat) <- proposal_sd
