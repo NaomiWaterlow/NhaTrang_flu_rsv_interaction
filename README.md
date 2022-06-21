@@ -1,8 +1,7 @@
 # NhaTrang_flu_rsv_interaction
 Repository accompanying the paper "Evidence for Influenza and RSV interaction from 10 years of enhanced surveillance in Nha Trang, Vietnam, a modelling study."
 
-All the code for generating the research and figures for the paper is included in this repository. However the data is not publically available. 
-The analysis can be run from the "initial_setup.R" script. 
+All the code for generating the research and figures for the paper is included in this repository. The summarised data is available in the file Nha_Trang_flu_rsv.csv
 
 See LICENSE file for licensing details.
 
